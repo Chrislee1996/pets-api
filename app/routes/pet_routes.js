@@ -49,6 +49,7 @@ router.get('/pets', (req, res, next) => {
 router.get('/pets/:id', (req,res,next) => {
     //we'll get the id from the req.params.d -> :id
     Pet.findById(req.params.id)
+    .populate('owner')
         .then(handle404)
         //if successful, respond with an object as json
         .then(pet => res.status(200).json( {pet:pet.toObject() }))
@@ -84,7 +85,7 @@ router.patch('/pets/:id',requireToken, removeBlanks, (req,res,next) => {
             requireOwnership(req,pet)
             return pet.updateOne(req.body.pet)
         })
-    //send a 204 if no content if successful
+    //send a 204 if no content if successful`
         .then(() => res.sendStatus(204))
     //pass to error handle if not successful
         .catch(next)
